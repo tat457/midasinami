@@ -64,12 +64,6 @@
             </div>
 
             <div class="flex items-center space-x-2">
-                <!-- 写真カスタマイズボタン -->
-                <button onclick="openCustomModal()" class="bg-amber-50 hover:bg-amber-100 text-amber-800 px-3 py-1.5 rounded-full text-xs font-bold transition flex items-center space-x-1 border border-amber-200 shadow-sm">
-                    <i class="fa-solid fa-camera text-amber-600"></i>
-                    <span>写真を変更</span>
-                </button>
-
                 <!-- GitHub公開ガイドボタン -->
                 <button onclick="openGithubModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full text-xs font-bold transition flex items-center space-x-1 border border-slate-300">
                     <i class="fa-brands fa-github"></i>
@@ -99,17 +93,10 @@
                 </span>
             </h2>
 
-            <p class="text-slate-600 text-sm md:text-base max-w-lg mx-auto mb-6 leading-relaxed">
+            <p class="text-slate-600 text-sm md:text-base max-w-lg mx-auto mb-8 leading-relaxed">
                 「身だしなみ」と「おしゃれ」の違い、知ってる？<br>
                 2つのイラスト・写真を見比べて、ビジネスや職場体験で**「相手に好印象を与える正しい例（○）」**を選ぼう！
             </p>
-
-            <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-3 max-w-md mx-auto mb-6 text-left flex items-start space-x-3">
-                <i class="fa-solid fa-circle-info text-amber-600 text-lg mt-0.5"></i>
-                <div class="text-xs text-amber-900 leading-relaxed font-semibold">
-                    右上メニューの「📷 写真を変更」から、**学校の制服や実際の写真をアップロード**してオリジナルクイズとして遊ぶこともできます！
-                </div>
-            </div>
 
             <button onclick="startGame()" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-lg md:text-xl rounded-2xl shadow-lg hover:shadow-2xl hover:scale-105 active:scale-95 transition duration-200 transform">
                 <i class="fa-solid fa-play mr-2"></i> クイズをはじめる！
@@ -274,41 +261,7 @@
             </button>
         </section>
 
-        <!-- 5. 写真・画像アップロードカスタマイズ モーダル -->
-        <div id="modal-custom" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl border-4 border-amber-200 animate-pop-in relative max-h-[90vh] flex flex-col">
-                
-                <div class="flex items-center justify-between mb-4 pb-3 border-b">
-                    <h3 class="text-xl font-black text-slate-800 flex items-center">
-                        <i class="fa-solid fa-camera text-amber-500 mr-2"></i>
-                        クイズ写真のアップロード・編集
-                    </h3>
-                    <button onclick="closeCustomModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold px-2">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-
-                <p class="text-xs text-slate-600 mb-4 font-medium">
-                    各問題の選択肢（A・B）に、パソコンやスマホにある**お手持ちの写真ファイル**をアップロードして差し替えることができます。
-                </p>
-
-                <!-- 問題一覧＆アップロードフォーム（スクロール可能） -->
-                <div id="custom-questions-list" class="flex-grow overflow-y-auto space-y-4 pr-1">
-                    <!-- JSで動的に問題ごとのアップロード枠を生成 -->
-                </div>
-
-                <div class="mt-6 pt-4 border-t flex flex-wrap justify-between items-center gap-3">
-                    <button onclick="resetAllImages()" class="text-xs text-rose-600 hover:text-rose-700 font-bold underline">
-                        イラスト初期状態にすべて戻す
-                    </button>
-                    <button onclick="closeCustomModal()" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-sm rounded-xl shadow transition">
-                        保存して閉じる
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- 6. GitHub公開方法 ガイドモーダル -->
+        <!-- 5. GitHub公開方法 ガイドモーダル -->
         <div id="modal-github" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border-4 border-slate-200 animate-pop-in relative max-h-[90vh] overflow-y-auto">
                 <div class="flex justify-between items-center mb-3 border-b pb-2">
@@ -445,9 +398,11 @@
         }
 
         // ==========================================
-        // クイズマスターデータ (8問)
+        // クイズマスターデータ (コード内で画像を直接挿入・変更可能です)
+        // ※ `image` には、画像URL (例: "https://example.com/image.jpg") または
+        //    SVG文字列 (`<svg...`) のどちらでも記述できます。
         // ==========================================
-        const defaultQuizData = [
+        const quizData = [
             {
                 id: 1,
                 category: "髪型・顔まわり",
@@ -455,8 +410,9 @@
                 correct: "A",
                 optionA: {
                     text: "前髪が目にかからず、おでこや顔がハッキリ見える清潔な髪型",
-                    customImg: null,
-                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                    // 画像URLに変更する場合は、下記のようにURLを入力してください。
+                    // image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
+                    image: `<svg viewBox="0 0 200 160" class="w-full h-full">
                         <circle cx="100" cy="80" r="70" fill="#e0f2fe"/>
                         <ellipse cx="100" cy="85" rx="32" ry="38" fill="#fef3c7"/>
                         <circle cx="88" cy="80" r="4" fill="#334155"/>
@@ -468,8 +424,7 @@
                 },
                 optionB: {
                     text: "前髪が長くて目や顔が隠れ、ボサボサと伸びきった髪型",
-                    customImg: null,
-                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                    image: `<svg viewBox="0 0 200 160" class="w-full h-full">
                         <circle cx="100" cy="80" r="70" fill="#ffe4e6"/>
                         <ellipse cx="100" cy="85" rx="32" ry="38" fill="#fef3c7"/>
                         <path d="M 60 90 C 50 40, 70 25, 100 25 C 130 25, 150 40, 140 90 C 130 100, 120 75, 100 75 C 80 75, 70 100, 60 90 Z" fill="#475569"/>
@@ -488,8 +443,7 @@
                 correct: "B",
                 optionA: {
                     text: "シワだらけで、胸元のボタンがいくつか外れてだらしない着こなし",
-                    customImg: null,
-                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                    image: `<svg viewBox="0 0 200 160" class="w-full h-full">
                         <circle cx="100" cy="80" r="70" fill="#ffe4e6"/>
                         <path d="M 60 150 L 75 80 L 100 100 L 125 80 L 140 150 Z" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
                         <path d="M 85 80 L 100 110 L 115 80" fill="#fef3c7" stroke="#cbd5e1"/>
@@ -498,8 +452,7 @@
                 },
                 optionB: {
                     text: "アイロンがかかってシワがなく、第一ボタンまでしっかり留まっている",
-                    customImg: null,
-                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                    image: `<svg viewBox="0 0 200 160" class="w-full h-full">
                         <circle cx="100" cy="80" r="70" fill="#e0f2fe"/>
                         <path d="M 60 150 L 70 85 L 100 95 L 130 85 L 140 150 Z" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
                         <path d="M 80 85 L 100 95 L 120 85 L 100 75 Z" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
@@ -516,8 +469,7 @@
                 correct: "A",
                 optionA: {
                     text: "汚れがなく綺麗に手入れされ、かかとを踏まずに正しく履いた靴",
-                    customImg: null,
-                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                    image: `<svg viewBox="0 0 200 160" class="w-full h-full">
                         <circle cx="100" cy="80" r="70" fill="#e0f2fe"/>
                         <path d="M 40 100 C 50 80, 90 85, 120 90 C 150 95, 165 110, 160 120 C 155 125, 40 125, 40 100 Z" fill="#1e293b"/>
                         <path d="M 45 120 L 158 120 L 158 125 L 45 125 Z" fill="#475569"/>
@@ -526,8 +478,7 @@
                 },
                 optionB: {
                     text: "かかとを踏み潰して履いていたり、泥汚れが目立つサンダル・靴",
-                    customImg: null,
-                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                    image: `<svg viewBox="0 0 200 160" class="w-full h-full">
                         <circle cx="100" cy="80" r="70" fill="#ffe4e6"/>
                         <path d="M 40 110 C 60 115, 90 90, 120 95 C 150 100, 165 115, 160 125 L 40 125 Z" fill="#64748b"/>
                         <circle cx="100" cy="110" r="5" fill="#78350f" opacity="0.7"/>
@@ -544,8 +495,7 @@
                 correct: "A",
                 optionA: {
                     text: "短く綺麗に切りそろえられ、汚れがない清潔な爪",
-                    customImg: null,
-                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                    image: `<svg viewBox="0 0 200 160" class="w-full h-full">
                         <circle cx="100" cy="80" r="70" fill="#e0f2fe"/>
                         <path d="M 60 140 L 60 70 A 12 12 0 0 1 84 70 L 84 140 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
                         <path d="M 90 140 L 90 55 A 12 12 0 0 1 114 55 L 114 140 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
@@ -555,8 +505,7 @@
                 },
                 optionB: {
                     text: "長く伸びきっていたり、派手なネイルアートや黒い汚れがついた爪",
-                    customImg: null,
-                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                    image: `<svg viewBox="0 0 200 160" class="w-full h-full">
                         <circle cx="100" cy="80" r="70" fill="#ffe4e6"/>
                         <path d="M 60 140 L 60 70 A 12 12 0 0 1 84 70 L 84 140 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
                         <path d="M 90 140 L 90 55 A 12 12 0 0 1 114 55 L 114 140 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
@@ -574,8 +523,7 @@
                 correct: "B",
                 optionA: {
                     text: "大きなネックレスや派手なブレスレットをいくつも身につける",
-                    customImg: null,
-                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                    image: `<svg viewBox="0 0 200 160" class="w-full h-full">
                         <circle cx="100" cy="80" r="70" fill="#ffe4e6"/>
                         <path d="M 70 50 C 70 90, 130 90, 130 50" fill="none" stroke="#f59e0b" stroke-width="6"/>
                         <polygon points="100,85 110,105 88,92 112,92 90,105" fill="#eab308"/>
@@ -583,8 +531,7 @@
                 },
                 optionB: {
                     text: "派手なアクセサリーは外す（時計などの実用品のみシンプルに）",
-                    customImg: null,
-                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                    image: `<svg viewBox="0 0 200 160" class="w-full h-full">
                         <circle cx="100" cy="80" r="70" fill="#e0f2fe"/>
                         <rect x="85" y="75" width="30" height="15" rx="3" fill="#334155"/>
                         <rect x="92" y="70" width="16" height="25" rx="4" fill="#94a3b8"/>
@@ -601,8 +548,7 @@
                 correct: "A",
                 optionA: {
                     text: "背筋がピンと伸び、相手の目を見て明るい笑顔で挨拶する",
-                    customImg: null,
-                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                    image: `<svg viewBox="0 0 200 160" class="w-full h-full">
                         <circle cx="100" cy="80" r="70" fill="#e0f2fe"/>
                         <circle cx="100" cy="65" r="28" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
                         <circle cx="90" cy="60" r="3.5" fill="#1e293b"/>
@@ -613,8 +559,7 @@
                 },
                 optionB: {
                     text: "猫背で下を向き、ポケットに手を入れたままぼそぼそ喋る",
-                    customImg: null,
-                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                    image: `<svg viewBox="0 0 200 160" class="w-full h-full">
                         <circle cx="100" cy="80" r="70" fill="#ffe4e6"/>
                         <circle cx="85" cy="75" r="28" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
                         <path d="M 75 78 L 82 78" stroke="#475569" stroke-width="3"/>
@@ -632,8 +577,7 @@
                 correct: "A",
                 optionA: {
                     text: "中身が整理整頓され、キーホルダーなども控えめなシンプルなバッグ",
-                    customImg: null,
-                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                    image: `<svg viewBox="0 0 200 160" class="w-full h-full">
                         <circle cx="100" cy="80" r="70" fill="#e0f2fe"/>
                         <rect x="55" y="65" width="90" height="65" rx="8" fill="#1e293b"/>
                         <path d="M 80 65 C 80 45, 120 45, 120 65" stroke="#334155" stroke-width="5" fill="none"/>
@@ -641,8 +585,7 @@
                 },
                 optionB: {
                     text: "チャックが閉まらないほどパンパンで、キーホルダーが大量についた鞄",
-                    customImg: null,
-                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                    image: `<svg viewBox="0 0 200 160" class="w-full h-full">
                         <circle cx="100" cy="80" r="70" fill="#ffe4e6"/>
                         <ellipse cx="100" cy="95" rx="55" ry="40" fill="#64748b"/>
                         <circle cx="50" cy="110" r="8" fill="#f59e0b"/>
@@ -659,16 +602,14 @@
                 correct: "B",
                 optionA: {
                     text: "汗のにおいを消すために、香水を全身にたっぷり吹きかけていく",
-                    customImg: null,
-                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                    image: `<svg viewBox="0 0 200 160" class="w-full h-full">
                         <circle cx="100" cy="80" r="70" fill="#ffe4e6"/>
                         <rect x="85" y="80" width="30" height="40" rx="5" fill="#ec4899"/>
                     </svg>`
                 },
                 optionB: {
                     text: "強い香水は使わず、お風呂や洗濯で「無臭・清潔な状態」を保つ",
-                    customImg: null,
-                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                    image: `<svg viewBox="0 0 200 160" class="w-full h-full">
                         <circle cx="100" cy="80" r="70" fill="#e0f2fe"/>
                         <rect x="70" y="70" width="60" height="40" rx="10" fill="#38bdf8"/>
                         <circle cx="65" cy="60" r="8" fill="#ffffff" opacity="0.8"/>
@@ -679,52 +620,12 @@
             }
         ];
 
-        // ディープコピーして作業用データ作成
-        let quizData = JSON.parse(JSON.stringify(defaultQuizData));
-
-        // localStorage から保存されたカスタム画像を読み込む
-        function loadCustomImagesFromStorage() {
-            try {
-                const saved = localStorage.getItem('manner_quiz_custom_images');
-                if (saved) {
-                    const customMap = JSON.parse(saved);
-                    quizData.forEach(q => {
-                        if (customMap[q.id]) {
-                            if (customMap[q.id].A) q.optionA.customImg = customMap[q.id].A;
-                            if (customMap[q.id].B) q.optionB.customImg = customMap[q.id].B;
-                        }
-                    });
-                }
-            } catch (e) {
-                console.log("Storage load error:", e);
-            }
-        }
-
-        function saveCustomImagesToStorage() {
-            try {
-                const customMap = {};
-                quizData.forEach(q => {
-                    customMap[q.id] = {
-                        A: q.optionA.customImg,
-                        B: q.optionB.customImg
-                    };
-                });
-                localStorage.setItem('manner_quiz_custom_images', JSON.stringify(customMap));
-            } catch (e) {
-                console.log("Storage save error:", e);
-            }
-        }
-
         // ==========================================
         // ゲーム状態変数
         // ==========================================
         let currentQuestionIndex = 0;
         let score = 0;
         let isAnsweringAllowed = true;
-
-        window.onload = function() {
-            loadCustomImagesFromStorage();
-        };
 
         function startGame() {
             currentQuestionIndex = 0;
@@ -739,6 +640,18 @@
             loadQuestion();
         }
 
+        // 画像・SVGの自動判別レンダラー
+        function renderVisual(container, imageSource) {
+            if (!imageSource) return;
+            const trimmed = imageSource.trim();
+            // SVGタグで始まる場合は直接HTML挿入、それ以外は<img>タグで挿入
+            if (trimmed.startsWith('<svg')) {
+                container.innerHTML = trimmed;
+            } else {
+                container.innerHTML = `<img src="${trimmed}" alt="Visual" class="quiz-visual-img" onerror="this.onerror=null; this.src='https://placehold.co/300x200/e2e8f0/475569?text=Image+Load+Error';">`;
+            }
+        }
+
         function loadQuestion() {
             isAnsweringAllowed = true;
             const q = quizData[currentQuestionIndex];
@@ -750,23 +663,13 @@
 
             document.getElementById('quiz-question').innerText = q.question;
 
-            // Visual A (カスタム画像があれば優先表示)
-            const visA = document.getElementById('visual-a');
-            if (q.optionA.customImg) {
-                visA.innerHTML = `<img src="${q.optionA.customImg}" alt="Option A" class="quiz-visual-img" onerror="this.onerror=null; this.src='https://placehold.co/300x200/e2e8f0/475569?text=Image+Error';">`;
-            } else {
-                visA.innerHTML = q.optionA.svg;
-            }
+            // Visual A (画像またはSVG)
+            renderVisual(document.getElementById('visual-a'), q.optionA.image);
             document.getElementById('text-a').innerText = q.optionA.text;
             document.getElementById('overlay-a').classList.add('hidden');
 
-            // Visual B
-            const visB = document.getElementById('visual-b');
-            if (q.optionB.customImg) {
-                visB.innerHTML = `<img src="${q.optionB.customImg}" alt="Option B" class="quiz-visual-img" onerror="this.onerror=null; this.src='https://placehold.co/300x200/e2e8f0/475569?text=Image+Error';">`;
-            } else {
-                visB.innerHTML = q.optionB.svg;
-            }
+            // Visual B (画像またはSVG)
+            renderVisual(document.getElementById('visual-b'), q.optionB.image);
             document.getElementById('text-b').innerText = q.optionB.text;
             document.getElementById('overlay-b').classList.add('hidden');
 
@@ -900,103 +803,6 @@
 
         function closeGithubModal() {
             document.getElementById('modal-github').classList.add('hidden');
-        }
-
-        // カスタマイズモーダル内の問題一覧を描画
-        function renderCustomModalList() {
-            const listContainer = document.getElementById('custom-questions-list');
-            listContainer.innerHTML = '';
-
-            quizData.forEach((q, idx) => {
-                const item = document.createElement('div');
-                item.className = "bg-slate-50 rounded-2xl p-4 border border-slate-200 text-left";
-
-                item.innerHTML = `
-                    <div class="font-extrabold text-sm text-slate-800 mb-2 flex items-center justify-between">
-                        <span>問${idx + 1}: ${q.category}</span>
-                        <span class="text-xs text-slate-500 font-normal truncate max-w-[200px]">${q.question}</span>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <!-- Option A カスタム枠 -->
-                        <div class="bg-white p-2.5 rounded-xl border border-slate-200 text-xs">
-                            <div class="font-bold text-sky-700 mb-1 flex items-center justify-between">
-                                <span>[選択肢 A]</span>
-                                ${q.optionA.customImg ? '<span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded">写真設定中</span>' : '<span class="text-[10px] text-slate-400">初期イラスト</span>'}
-                            </div>
-                            <div class="flex items-center space-x-2 mb-2">
-                                <label class="cursor-pointer bg-sky-50 hover:bg-sky-100 text-sky-700 px-2.5 py-1 rounded-lg border border-sky-200 font-bold transition flex items-center space-x-1">
-                                    <i class="fa-solid fa-upload"></i>
-                                    <span>写真ファイルを選択</span>
-                                    <input type="file" accept="image/*" class="hidden" onchange="handleFileUpload(event, ${q.id}, 'A')">
-                                </label>
-                                ${q.optionA.customImg ? `<button onclick="clearCustomImg(${q.id}, 'A')" class="text-rose-500 hover:text-rose-700 text-xs">削除</button>` : ''}
-                            </div>
-                        </div>
-
-                        <!-- Option B カスタム枠 -->
-                        <div class="bg-white p-2.5 rounded-xl border border-slate-200 text-xs">
-                            <div class="font-bold text-indigo-700 mb-1 flex items-center justify-between">
-                                <span>[選択肢 B]</span>
-                                ${q.optionB.customImg ? '<span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded">写真設定中</span>' : '<span class="text-[10px] text-slate-400">初期イラスト</span>'}
-                            </div>
-                            <div class="flex items-center space-x-2 mb-2">
-                                <label class="cursor-pointer bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-lg border border-indigo-200 font-bold transition flex items-center space-x-1">
-                                    <i class="fa-solid fa-upload"></i>
-                                    <span>写真ファイルを選択</span>
-                                    <input type="file" accept="image/*" class="hidden" onchange="handleFileUpload(event, ${q.id}, 'B')">
-                                </label>
-                                ${q.optionB.customImg ? `<button onclick="clearCustomImg(${q.id}, 'B')" class="text-rose-500 hover:text-rose-700 text-xs">削除</button>` : ''}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                listContainer.appendChild(item);
-            });
-        }
-
-        // ファイルアップロード処理 (FileReaderでDataURL化)
-        function handleFileUpload(event, questionId, optionKey) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64Img = e.target.result;
-                const targetQ = quizData.find(q => q.id === questionId);
-                if (targetQ) {
-                    if (optionKey === 'A') targetQ.optionA.customImg = base64Img;
-                    if (optionKey === 'B') targetQ.optionB.customImg = base64Img;
-
-                    saveCustomImagesToStorage();
-                    renderCustomModalList();
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // 写真の個別削除
-        function clearCustomImg(questionId, optionKey) {
-            const targetQ = quizData.find(q => q.id === questionId);
-            if (targetQ) {
-                if (optionKey === 'A') targetQ.optionA.customImg = null;
-                if (optionKey === 'B') targetQ.optionB.customImg = null;
-
-                saveCustomImagesToStorage();
-                renderCustomModalList();
-            }
-        }
-
-        // すべてイラストに戻す
-        function resetAllImages() {
-            if (confirm("すべてのアップロード写真を削除し、初期のイラストに戻しますか？")) {
-                quizData.forEach(q => {
-                    q.optionA.customImg = null;
-                    q.optionB.customImg = null;
-                });
-                localStorage.removeItem('manner_quiz_custom_images');
-                renderCustomModalList();
-            }
         }
 
         // ==========================================
