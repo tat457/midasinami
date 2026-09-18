@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>めざせ！身だしなみマスター ★ 中学生のビジネスマナー○✖クイズ</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #e0e7ff 100%);
+            min-height: 100vh;
+        }
+
+        /* アニメーション設定 */
+        @keyframes pop-in {
+            0% { transform: scale(0.8) rotate(-2deg); opacity: 0; }
+            80% { transform: scale(1.02) rotate(1deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0); }
+        }
+        .animate-pop-in {
+            animation: pop-in 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* 紙吹雪用キャンバス */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* 画像コンテナ内プレビュー調整 */
+        .quiz-visual-img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            border-radius: 0.75rem;
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col min-h-screen">
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- ヘッダー -->
+    <header class="bg-white/85 backdrop-blur-md shadow-sm border-b border-sky-100 sticky top-0 z-30">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center space-x-2">
+                <span class="bg-gradient-to-tr from-blue-600 to-indigo-500 text-white p-2 rounded-xl text-xl shadow-md">
+                    <i class="fa-solid fa-user-tie"></i>
+                </span>
+                <div>
+                    <h1 class="font-extrabold text-base md:text-xl text-slate-800 tracking-tight">身だしなみマスタースクール</h1>
+                    <p class="text-[10px] md:text-xs text-sky-600 font-bold">中学生のためのビジネスマナー講座</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <!-- 写真カスタマイズボタン -->
+                <button onclick="openCustomModal()" class="bg-amber-50 hover:bg-amber-100 text-amber-800 px-3 py-1.5 rounded-full text-xs font-bold transition flex items-center space-x-1 border border-amber-200 shadow-sm">
+                    <i class="fa-solid fa-camera text-amber-600"></i>
+                    <span>写真を変更</span>
+                </button>
+
+                <!-- GitHub公開ガイドボタン -->
+                <button onclick="openGithubModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full text-xs font-bold transition flex items-center space-x-1 border border-slate-300">
+                    <i class="fa-brands fa-github"></i>
+                    <span class="hidden sm:inline">GitHub公開方法</span>
+                </button>
+
+                <!-- 音声切り替え -->
+                <button id="sound-toggle-btn" onclick="toggleSound()" class="bg-sky-50 hover:bg-sky-100 text-sky-700 px-2.5 py-1.5 rounded-full text-xs font-bold transition border border-sky-200">
+                    <i id="sound-icon" class="fa-solid fa-volume-high"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツエリア -->
+    <main class="flex-grow max-w-4xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center">
+
+        <!-- 1. スタート画面 -->
+        <section id="screen-start" class="bg-white rounded-3xl p-6 md:p-10 shadow-xl border-4 border-sky-100 text-center relative overflow-hidden my-auto animate-pop-in">
+            <span class="inline-block bg-sky-100 text-sky-700 text-xs md:text-sm font-extrabold px-4 py-1.5 rounded-full mb-3 tracking-wider">
+                ✨ 職場体験・面接・将来に役立つ！
+            </span>
+            <h2 class="text-2xl md:text-4xl font-black text-slate-800 mb-4 leading-tight">
+                どっちが良い例（○）？<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500">
+                    身だしなみ○✖くらべるクイズ
+                </span>
+            </h2>
+
+            <p class="text-slate-600 text-sm md:text-base max-w-lg mx-auto mb-6 leading-relaxed">
+                「身だしなみ」と「おしゃれ」の違い、知ってる？<br>
+                2つのイラスト・写真を見比べて、ビジネスや職場体験で**「相手に好印象を与える正しい例（○）」**を選ぼう！
+            </p>
+
+            <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-3 max-w-md mx-auto mb-6 text-left flex items-start space-x-3">
+                <i class="fa-solid fa-circle-info text-amber-600 text-lg mt-0.5"></i>
+                <div class="text-xs text-amber-900 leading-relaxed font-semibold">
+                    右上メニューの「📷 写真を変更」から、**学校の制服や実際の写真をアップロード**してオリジナルクイズとして遊ぶこともできます！
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-lg md:text-xl rounded-2xl shadow-lg hover:shadow-2xl hover:scale-105 active:scale-95 transition duration-200 transform">
+                <i class="fa-solid fa-play mr-2"></i> クイズをはじめる！
+            </button>
+        </section>
+
+        <!-- 2. クイズ画面 -->
+        <section id="screen-quiz" class="hidden flex-col">
+            <!-- 進捗バー＆ステータス -->
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-sky-100 mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span id="quiz-category" class="bg-indigo-100 text-indigo-700 font-extrabold text-xs px-3 py-1 rounded-full">
+                        カテゴリー: 髪型・顔まわり
+                    </span>
+                    <span id="quiz-counter" class="text-sm font-black text-slate-500">
+                        第 <span class="text-blue-600 text-lg">1</span> / 8 問
+                    </span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                    <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-indigo-600 h-3 rounded-full transition-all duration-300" style="width: 12.5%;"></div>
+                </div>
+            </div>
+
+            <!-- クイズお題タイトル -->
+            <div class="text-center mb-6">
+                <h3 id="quiz-question" class="text-lg md:text-2xl font-black text-slate-800 bg-white/90 backdrop-blur inline-block px-6 py-2 rounded-2xl shadow-sm border border-slate-200">
+                    面接や職場体験での「髪型」として良い例（○）はどっち？
+                </h3>
+            </div>
+
+            <!-- 2択選択肢（左右カード） -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+                <!-- 選択肢 A -->
+                <button id="card-a" onclick="selectAnswer('A')" class="group relative bg-white hover:bg-sky-50/50 rounded-3xl p-5 border-4 border-slate-200 hover:border-sky-400 shadow-lg transition-all duration-200 transform hover:-translate-y-1 text-left flex flex-col items-center justify-between cursor-pointer focus:outline-none">
+                    <div class="w-full flex justify-between items-center mb-3">
+                        <span class="bg-sky-500 text-white font-black text-sm px-3 py-1 rounded-xl shadow">A</span>
+                        <span class="text-xs text-slate-400 font-bold group-hover:text-sky-600">タップして選択</span>
+                    </div>
+
+                    <!-- Visual Container (SVG or Custom Image) -->
+                    <div id="visual-a" class="w-full h-48 bg-slate-50 rounded-2xl flex items-center justify-center p-2 mb-4 border border-slate-100 group-hover:bg-white transition overflow-hidden">
+                    </div>
+
+                    <div id="text-a" class="w-full font-bold text-slate-700 text-sm md:text-base text-center bg-slate-50 p-3 rounded-xl border border-slate-100 group-hover:bg-sky-100/50 transition">
+                        前髪が目にかからず、顔がはっきり見える清潔な髪型
+                    </div>
+
+                    <!-- 判定表示用オーバレイ -->
+                    <div id="overlay-a" class="hidden absolute inset-0 rounded-3xl bg-white/95 backdrop-blur-sm flex-col items-center justify-center z-10 animate-pop-in">
+                        <div id="stamp-a" class="text-7xl font-black mb-2"></div>
+                        <span id="stamp-text-a" class="text-xl font-extrabold"></span>
+                    </div>
+                </button>
+
+                <!-- 選択肢 B -->
+                <button id="card-b" onclick="selectAnswer('B')" class="group relative bg-white hover:bg-sky-50/50 rounded-3xl p-5 border-4 border-slate-200 hover:border-sky-400 shadow-lg transition-all duration-200 transform hover:-translate-y-1 text-left flex flex-col items-center justify-between cursor-pointer focus:outline-none">
+                    <div class="w-full flex justify-between items-center mb-3">
+                        <span class="bg-indigo-500 text-white font-black text-sm px-3 py-1 rounded-xl shadow">B</span>
+                        <span class="text-xs text-slate-400 font-bold group-hover:text-indigo-600">タップして選択</span>
+                    </div>
+
+                    <!-- Visual Container (SVG or Custom Image) -->
+                    <div id="visual-b" class="w-full h-48 bg-slate-50 rounded-2xl flex items-center justify-center p-2 mb-4 border border-slate-100 group-hover:bg-white transition overflow-hidden">
+                    </div>
+
+                    <div id="text-b" class="w-full font-bold text-slate-700 text-sm md:text-base text-center bg-slate-50 p-3 rounded-xl border border-slate-100 group-hover:bg-indigo-100/50 transition">
+                        前髪が長く目や顔を隠していて、寝癖が残ったボサボサ髪
+                    </div>
+
+                    <!-- 判定表示用オーバレイ -->
+                    <div id="overlay-b" class="hidden absolute inset-0 rounded-3xl bg-white/95 backdrop-blur-sm flex-col items-center justify-center z-10 animate-pop-in">
+                        <div id="stamp-b" class="text-7xl font-black mb-2"></div>
+                        <span id="stamp-text-b" class="text-xl font-extrabold"></span>
+                    </div>
+                </button>
+
+            </div>
+        </section>
+
+        <!-- 3. 解説モーダル -->
+        <div id="modal-explanation" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl border-4 border-sky-100 animate-pop-in relative max-h-[90vh] overflow-y-auto">
+                <div id="modal-header" class="flex items-center space-x-3 mb-4 pb-3 border-b-2">
+                    <span id="modal-badge" class="w-12 h-12 rounded-full flex items-center justify-center text-2xl font-black text-white shrink-0">
+                        ○
+                    </span>
+                    <div>
+                        <h4 id="modal-title" class="text-xl md:text-2xl font-black text-slate-800">
+                            大正解！
+                        </h4>
+                        <p class="text-xs font-bold text-slate-500">身だしなみのワンポイントマナー</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-6">
+                    <h5 class="text-sm font-extrabold text-indigo-700 mb-1 flex items-center">
+                        <i class="fa-solid fa-lightbulb mr-2 text-amber-500"></i> なぜこれが「○」なの？
+                    </h5>
+                    <p id="modal-explanation-text" class="text-sm md:text-base text-slate-700 leading-relaxed font-medium">
+                        解説が入ります。
+                    </p>
+                </div>
+
+                <div class="bg-amber-50 rounded-2xl p-4 border border-amber-200 mb-6">
+                    <h5 class="text-xs font-bold text-amber-800 mb-1 flex items-center">
+                        <i class="fa-solid fa-star mr-1 text-amber-500"></i> 中学生のための極意
+                    </h5>
+                    <p id="modal-tip-text" class="text-xs md:text-sm text-amber-900 font-semibold">
+                        アドバイスが入ります。
+                    </p>
+                </div>
+
+                <button onclick="nextQuestion()" class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-lg rounded-2xl shadow-lg transition transform active:scale-95 flex items-center justify-center">
+                    <span>次の問題へ進む</span>
+                    <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 4. 結果発表画面 -->
+        <section id="screen-result" class="hidden bg-white rounded-3xl p-6 md:p-10 shadow-xl border-4 border-sky-100 text-center animate-pop-in my-auto">
+            <span class="inline-block bg-indigo-100 text-indigo-700 text-xs font-extrabold px-4 py-1.5 rounded-full mb-3">
+                🏆 クイズ結果発表
+            </span>
+
+            <h2 class="text-2xl md:text-3xl font-black text-slate-800 mb-2">
+                おつかれさまでした！
+            </h2>
+            <p class="text-sm text-slate-500 font-bold mb-6">あなたの身だしなみマナー度はこちら！</p>
+
+            <!-- スコアカード -->
+            <div class="bg-gradient-to-br from-slate-50 to-sky-50 rounded-3xl p-6 border-2 border-sky-200 max-w-md mx-auto mb-6 shadow-inner">
+                <div class="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 mb-2">
+                    <span id="score-val">0</span> <span class="text-2xl text-slate-600">/ 8 問正解</span>
+                </div>
+                <div id="rank-badge" class="inline-block bg-amber-400 text-slate-900 font-black text-sm md:text-base px-4 py-1.5 rounded-full shadow mb-3">
+                    身だしなみマスター級！
+                </div>
+                <p id="rank-comment" class="text-xs md:text-sm text-slate-600 font-medium leading-relaxed">
+                    素晴らしい！完璧なマナー感覚を持っています。
+                </p>
+            </div>
+
+            <!-- 身だしなみ総チェックリスト -->
+            <div class="text-left bg-slate-50 rounded-2xl p-4 md:p-5 border border-slate-200 max-w-lg mx-auto mb-8">
+                <h4 class="font-extrabold text-sm text-slate-800 mb-3 flex items-center border-b pb-2">
+                    <i class="fa-solid fa-clipboard-check text-emerald-500 mr-2 text-lg"></i>
+                    職場体験・面接の「身だしなみ」即効チェックリスト
+                </h4>
+                <ul class="text-xs md:text-sm text-slate-700 space-y-2 font-medium">
+                    <li class="flex items-start"><i class="fa-solid fa-check text-emerald-500 mr-2 mt-0.5"></i> 髪型：おでこ・耳・襟足がすっきり。ボサボサでないか。</li>
+                    <li class="flex items-start"><i class="fa-solid fa-check text-emerald-500 mr-2 mt-0.5"></i> 服装：シワや汚れがなく、ボタンは留まっているか。</li>
+                    <li class="flex items-start"><i class="fa-solid fa-check text-emerald-500 mr-2 mt-0.5"></i> 足元：靴のかかとを踏んでいないか。汚れはないか。</li>
+                    <li class="flex items-start"><i class="fa-solid fa-check text-emerald-500 mr-2 mt-0.5"></i> 手元：爪は短く切ってあるか。（派手なネイル・汚れNG）</li>
+                    <li class="flex items-start"><i class="fa-solid fa-check text-emerald-500 mr-2 mt-0.5"></i> 姿勢：背筋をピシッと伸ばし、笑顔で明るく挨拶！</li>
+                </ul>
+            </div>
+
+            <button onclick="startGame()" class="px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-extrabold text-base rounded-2xl shadow-md hover:shadow-xl hover:scale-105 active:scale-95 transition">
+                <i class="fa-solid fa-rotate-right mr-2"></i> もう一度チャレンジ！
+            </button>
+        </section>
+
+        <!-- 5. 写真・画像アップロードカスタマイズ モーダル -->
+        <div id="modal-custom" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl border-4 border-amber-200 animate-pop-in relative max-h-[90vh] flex flex-col">
+                
+                <div class="flex items-center justify-between mb-4 pb-3 border-b">
+                    <h3 class="text-xl font-black text-slate-800 flex items-center">
+                        <i class="fa-solid fa-camera text-amber-500 mr-2"></i>
+                        クイズ写真のアップロード・編集
+                    </h3>
+                    <button onclick="closeCustomModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold px-2">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <p class="text-xs text-slate-600 mb-4 font-medium">
+                    各問題の選択肢（A・B）に、パソコンやスマホにある**お手持ちの写真ファイル**をアップロードして差し替えることができます。
+                </p>
+
+                <!-- 問題一覧＆アップロードフォーム（スクロール可能） -->
+                <div id="custom-questions-list" class="flex-grow overflow-y-auto space-y-4 pr-1">
+                    <!-- JSで動的に問題ごとのアップロード枠を生成 -->
+                </div>
+
+                <div class="mt-6 pt-4 border-t flex flex-wrap justify-between items-center gap-3">
+                    <button onclick="resetAllImages()" class="text-xs text-rose-600 hover:text-rose-700 font-bold underline">
+                        イラスト初期状態にすべて戻す
+                    </button>
+                    <button onclick="closeCustomModal()" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-sm rounded-xl shadow transition">
+                        保存して閉じる
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. GitHub公開方法 ガイドモーダル -->
+        <div id="modal-github" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border-4 border-slate-200 animate-pop-in relative max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-3 border-b pb-2">
+                    <h3 class="text-lg font-black text-slate-800 flex items-center">
+                        <i class="fa-brands fa-github text-2xl mr-2"></i> GitHub Pagesでの無料公開手順
+                    </h3>
+                    <button onclick="closeGithubModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <ol class="text-xs text-slate-700 space-y-3 font-medium list-decimal list-inside leading-relaxed">
+                    <li class="bg-slate-50 p-2.5 rounded-xl border">
+                        <strong class="text-slate-900">GitHubアカウントを作成</strong>してログインします。
+                    </li>
+                    <li class="bg-slate-50 p-2.5 rounded-xl border">
+                        <strong class="text-slate-900">「New Repository」</strong>からリポジトリ（例: <code class="bg-slate-200 px-1 rounded">manner-quiz</code>）を作成します。
+                    </li>
+                    <li class="bg-slate-50 p-2.5 rounded-xl border">
+                        このコード（<code class="bg-slate-200 px-1 rounded">index.html</code>）をそのままアップロード（Add file -> Upload files）して Commit します。
+                    </li>
+                    <li class="bg-slate-50 p-2.5 rounded-xl border">
+                        リポジトリの <strong>Settings > Pages</strong> を開き、Source を <strong>「Deploy from a branch (main)」</strong> に設定して Save を押します。
+                    </li>
+                    <li class="bg-slate-50 p-2.5 rounded-xl border">
+                        数分待つと、<code class="bg-emerald-100 text-emerald-800 px-1 rounded">https://ユーザー名.github.io/manner-quiz/</code> のURLが発行され、誰でも遊べるようになります！
+                    </li>
+                </ol>
+
+                <button onclick="closeGithubModal()" class="mt-5 w-full py-2.5 bg-slate-800 text-white font-bold text-xs rounded-xl hover:bg-slate-900 transition">
+                    とじる
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- フッター -->
+    <footer class="bg-white/60 backdrop-blur-sm border-t border-slate-200 py-3 text-center text-xs text-slate-500 font-bold mt-auto">
+        身だしなみマスタースクール ★ Middle School Business Manners Game
+    </footer>
+
+    <script>
+        // ==========================================
+        // サウンド効果音モジュール (Web Audio API)
+        // ==========================================
+        let soundEnabled = true;
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (soundEnabled) {
+                icon.className = "fa-solid fa-volume-high text-sky-600";
+            } else {
+                icon.className = "fa-solid fa-volume-xmark text-slate-400";
+            }
+        }
+
+        function playCorrectSound() {
+            if (!soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                const osc1 = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(659.25, now); // E5
+                osc1.frequency.setValueAtTime(880, now + 0.15); // A5
+
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+                osc1.connect(gain);
+                gain.connect(ctx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.5);
+            } catch (e) { console.log(e); }
+        }
+
+        function playWrongSound() {
+            if (!soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.setValueAtTime(110, now + 0.2);
+
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } catch (e) { console.log(e); }
+        }
+
+        function playFanfareSound() {
+            if (!soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+
+                notes.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+                    gain.gain.setValueAtTime(0.2, now + idx * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.35);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now + idx * 0.1);
+                    osc.stop(now + idx * 0.1 + 0.35);
+                });
+            } catch (e) { console.log(e); }
+        }
+
+        // ==========================================
+        // クイズマスターデータ (8問)
+        // ==========================================
+        const defaultQuizData = [
+            {
+                id: 1,
+                category: "髪型・顔まわり",
+                question: "職場体験や面接での「髪型」として適切なのはどっち？",
+                correct: "A",
+                optionA: {
+                    text: "前髪が目にかからず、おでこや顔がハッキリ見える清潔な髪型",
+                    customImg: null,
+                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                        <circle cx="100" cy="80" r="70" fill="#e0f2fe"/>
+                        <ellipse cx="100" cy="85" rx="32" ry="38" fill="#fef3c7"/>
+                        <circle cx="88" cy="80" r="4" fill="#334155"/>
+                        <circle cx="112" cy="80" r="4" fill="#334155"/>
+                        <path d="M 90 98 Q 100 110 110 98" stroke="#334155" stroke-width="3" fill="none" stroke-linecap="round"/>
+                        <path d="M 68 80 C 65 50, 75 35, 100 35 C 125 35, 135 50, 132 80 C 128 60, 115 50, 100 50 C 85 50, 72 60, 68 80 Z" fill="#334155"/>
+                        <path d="M 70 130 L 100 115 L 130 130 L 135 160 L 65 160 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+                    </svg>`
+                },
+                optionB: {
+                    text: "前髪が長くて目や顔が隠れ、ボサボサと伸びきった髪型",
+                    customImg: null,
+                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                        <circle cx="100" cy="80" r="70" fill="#ffe4e6"/>
+                        <ellipse cx="100" cy="85" rx="32" ry="38" fill="#fef3c7"/>
+                        <path d="M 60 90 C 50 40, 70 25, 100 25 C 130 25, 150 40, 140 90 C 130 100, 120 75, 100 75 C 80 75, 70 100, 60 90 Z" fill="#475569"/>
+                        <path d="M 82 82 L 92 82" stroke="#94a3b8" stroke-width="3"/>
+                        <path d="M 108 82 L 118 82" stroke="#94a3b8" stroke-width="3"/>
+                        <path d="M 92 102 Q 100 98 108 102" stroke="#475569" stroke-width="3" fill="none"/>
+                    </svg>`
+                },
+                explanation: "身だしなみの基本は「相手にどんな印象を与えるか」です。目や眉が見えると、明るく誠実で清潔な印象になります。",
+                tip: "前髪が目にかかる場合はピンで留めるか、ワックスなどでナチュラルに整えましょう。"
+            },
+            {
+                id: 2,
+                category: "服装・シャツ",
+                question: "制服やワイシャツの着こなしとして正しいのはどっち？",
+                correct: "B",
+                optionA: {
+                    text: "シワだらけで、胸元のボタンがいくつか外れてだらしない着こなし",
+                    customImg: null,
+                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                        <circle cx="100" cy="80" r="70" fill="#ffe4e6"/>
+                        <path d="M 60 150 L 75 80 L 100 100 L 125 80 L 140 150 Z" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+                        <path d="M 85 80 L 100 110 L 115 80" fill="#fef3c7" stroke="#cbd5e1"/>
+                        <path d="M 70 120 Q 85 125 90 140" stroke="#cbd5e1" stroke-width="2" fill="none"/>
+                    </svg>`
+                },
+                optionB: {
+                    text: "アイロンがかかってシワがなく、第一ボタンまでしっかり留まっている",
+                    customImg: null,
+                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                        <circle cx="100" cy="80" r="70" fill="#e0f2fe"/>
+                        <path d="M 60 150 L 70 85 L 100 95 L 130 85 L 140 150 Z" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+                        <path d="M 80 85 L 100 95 L 120 85 L 100 75 Z" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+                        <path d="M 96 95 L 104 95 L 106 140 L 100 148 L 94 140 Z" fill="#2563eb"/>
+                    </svg>`
+                },
+                explanation: "服のシワやダボつきは「大雑把」「だらしない」という印象を与えてしまいます。第一ボタンまでピシッと閉めるのがビジネスマナーです。",
+                tip: "前日にアイロンをかけるか、ハンガーに綺麗に吊るしておく習慣をつけましょう。"
+            },
+            {
+                id: 3,
+                category: "足元・靴",
+                question: "職場体験や面接に履いていく靴として正しいのはどっち？",
+                correct: "A",
+                optionA: {
+                    text: "汚れがなく綺麗に手入れされ、かかとを踏まずに正しく履いた靴",
+                    customImg: null,
+                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                        <circle cx="100" cy="80" r="70" fill="#e0f2fe"/>
+                        <path d="M 40 100 C 50 80, 90 85, 120 90 C 150 95, 165 110, 160 120 C 155 125, 40 125, 40 100 Z" fill="#1e293b"/>
+                        <path d="M 45 120 L 158 120 L 158 125 L 45 125 Z" fill="#475569"/>
+                        <path d="M 120 95 Q 140 100 145 108" stroke="#ffffff" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.6"/>
+                    </svg>`
+                },
+                optionB: {
+                    text: "かかとを踏み潰して履いていたり、泥汚れが目立つサンダル・靴",
+                    customImg: null,
+                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                        <circle cx="100" cy="80" r="70" fill="#ffe4e6"/>
+                        <path d="M 40 110 C 60 115, 90 90, 120 95 C 150 100, 165 115, 160 125 L 40 125 Z" fill="#64748b"/>
+                        <circle cx="100" cy="110" r="5" fill="#78350f" opacity="0.7"/>
+                        <circle cx="130" cy="115" r="7" fill="#78350f" opacity="0.7"/>
+                    </svg>`
+                },
+                explanation: "「おしゃれは足元から」と言われますが、ビジネスマナーでも「足元」はとても見られています。かかとを踏むのは絶対にNGです！",
+                tip: "スニーカーが許可されている場合でも、事前に汚れを落として綺麗にしておきましょう。"
+            },
+            {
+                id: 4,
+                category: "手元・指先",
+                question: "ビジネスマナーとして適切な「爪（つめ）」の状態はどっち？",
+                correct: "A",
+                optionA: {
+                    text: "短く綺麗に切りそろえられ、汚れがない清潔な爪",
+                    customImg: null,
+                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                        <circle cx="100" cy="80" r="70" fill="#e0f2fe"/>
+                        <path d="M 60 140 L 60 70 A 12 12 0 0 1 84 70 L 84 140 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                        <path d="M 90 140 L 90 55 A 12 12 0 0 1 114 55 L 114 140 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                        <path d="M 64 68 A 8 8 0 0 1 80 68 L 80 75 L 64 75 Z" fill="#ffffff" stroke="#cbd5e1"/>
+                        <path d="M 94 53 A 8 8 0 0 1 110 53 L 110 60 L 94 60 Z" fill="#ffffff" stroke="#cbd5e1"/>
+                    </svg>`
+                },
+                optionB: {
+                    text: "長く伸びきっていたり、派手なネイルアートや黒い汚れがついた爪",
+                    customImg: null,
+                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                        <circle cx="100" cy="80" r="70" fill="#ffe4e6"/>
+                        <path d="M 60 140 L 60 70 A 12 12 0 0 1 84 70 L 84 140 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                        <path d="M 90 140 L 90 55 A 12 12 0 0 1 114 55 L 114 140 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                        <path d="M 62 60 A 10 10 0 0 1 82 60 L 82 75 L 62 75 Z" fill="#ec4899"/>
+                        <path d="M 92 40 A 10 10 0 0 1 112 40 L 112 60 L 92 60 Z" fill="#ec4899"/>
+                    </svg>`
+                },
+                explanation: "名刺を渡したり書類を扱うとき、手元は必ず相手の目に入ります。爪が伸びていると不衛生な印象を与えます。",
+                tip: "手のひら側から見たときに、爪の先が見えない長さが理想的です。"
+            },
+            {
+                id: 5,
+                category: "アクセサリー",
+                question: "職場体験やビジネスマナーでの「アクセサリー」のルールはどっち？",
+                correct: "B",
+                optionA: {
+                    text: "大きなネックレスや派手なブレスレットをいくつも身につける",
+                    customImg: null,
+                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                        <circle cx="100" cy="80" r="70" fill="#ffe4e6"/>
+                        <path d="M 70 50 C 70 90, 130 90, 130 50" fill="none" stroke="#f59e0b" stroke-width="6"/>
+                        <polygon points="100,85 110,105 88,92 112,92 90,105" fill="#eab308"/>
+                    </svg>`
+                },
+                optionB: {
+                    text: "派手なアクセサリーは外す（時計などの実用品のみシンプルに）",
+                    customImg: null,
+                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                        <circle cx="100" cy="80" r="70" fill="#e0f2fe"/>
+                        <rect x="85" y="75" width="30" height="15" rx="3" fill="#334155"/>
+                        <rect x="92" y="70" width="16" height="25" rx="4" fill="#94a3b8"/>
+                        <circle cx="100" cy="82" r="6" fill="#ffffff"/>
+                    </svg>`
+                },
+                explanation: "ビジネスや職場体験の場は仕事をする場所です。派手な装飾品は危険であったり邪魔になることがあります。",
+                tip: "学校や仕事の場では、原則としてアクセサリーは外すのがルールです。"
+            },
+            {
+                id: 6,
+                category: "姿勢・表情",
+                question: "相手と話すとき・挨拶するときの「姿勢と表情」はどっちが○？",
+                correct: "A",
+                optionA: {
+                    text: "背筋がピンと伸び、相手の目を見て明るい笑顔で挨拶する",
+                    customImg: null,
+                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                        <circle cx="100" cy="80" r="70" fill="#e0f2fe"/>
+                        <circle cx="100" cy="65" r="28" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                        <circle cx="90" cy="60" r="3.5" fill="#1e293b"/>
+                        <circle cx="110" cy="60" r="3.5" fill="#1e293b"/>
+                        <path d="M 88 75 Q 100 88 112 75" stroke="#1e293b" stroke-width="3" fill="none" stroke-linecap="round"/>
+                        <path d="M 65 150 L 80 100 L 120 100 L 135 150 Z" fill="#2563eb"/>
+                    </svg>`
+                },
+                optionB: {
+                    text: "猫背で下を向き、ポケットに手を入れたままぼそぼそ喋る",
+                    customImg: null,
+                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                        <circle cx="100" cy="80" r="70" fill="#ffe4e6"/>
+                        <circle cx="85" cy="75" r="28" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                        <path d="M 75 78 L 82 78" stroke="#475569" stroke-width="3"/>
+                        <path d="M 90 78 L 97 78" stroke="#475569" stroke-width="3"/>
+                        <path d="M 60 150 C 60 110, 80 100, 110 110 L 120 150 Z" fill="#64748b"/>
+                    </svg>`
+                },
+                explanation: "猫背でポケットに手を入れていると意欲がない印象を与えてしまいます。良い姿勢は「信頼感」に直結します。",
+                tip: "壁に頭・背中・かかとをつけて立つと、正しいまっすぐな姿勢が身につきます。"
+            },
+            {
+                id: 7,
+                category: "持ち物・カバン",
+                question: "職場体験に持っていく「カバンや持ち物」としてふさわしいのはどっち？",
+                correct: "A",
+                optionA: {
+                    text: "中身が整理整頓され、キーホルダーなども控えめなシンプルなバッグ",
+                    customImg: null,
+                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                        <circle cx="100" cy="80" r="70" fill="#e0f2fe"/>
+                        <rect x="55" y="65" width="90" height="65" rx="8" fill="#1e293b"/>
+                        <path d="M 80 65 C 80 45, 120 45, 120 65" stroke="#334155" stroke-width="5" fill="none"/>
+                    </svg>`
+                },
+                optionB: {
+                    text: "チャックが閉まらないほどパンパンで、キーホルダーが大量についた鞄",
+                    customImg: null,
+                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                        <circle cx="100" cy="80" r="70" fill="#ffe4e6"/>
+                        <ellipse cx="100" cy="95" rx="55" ry="40" fill="#64748b"/>
+                        <circle cx="50" cy="110" r="8" fill="#f59e0b"/>
+                        <circle cx="150" cy="115" r="9" fill="#10b981"/>
+                    </svg>`
+                },
+                explanation: "パンパンのカバンは「自己管理が苦手」と思われがちです。必要なものがすぐに取り出せるように整理しましょう。",
+                tip: "A4ファイルが折れずに入るシンプルなリュックやトートバッグが理想的です。"
+            },
+            {
+                id: 8,
+                category: "におい・清潔感",
+                question: "身だしなみにおける「においや香り」のマナーとして正しいのはどっち？",
+                correct: "B",
+                optionA: {
+                    text: "汗のにおいを消すために、香水を全身にたっぷり吹きかけていく",
+                    customImg: null,
+                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                        <circle cx="100" cy="80" r="70" fill="#ffe4e6"/>
+                        <rect x="85" y="80" width="30" height="40" rx="5" fill="#ec4899"/>
+                    </svg>`
+                },
+                optionB: {
+                    text: "強い香水は使わず、お風呂や洗濯で「無臭・清潔な状態」を保つ",
+                    customImg: null,
+                    svg: `<svg viewBox="0 0 200 160" class="w-full h-full">
+                        <circle cx="100" cy="80" r="70" fill="#e0f2fe"/>
+                        <rect x="70" y="70" width="60" height="40" rx="10" fill="#38bdf8"/>
+                        <circle cx="65" cy="60" r="8" fill="#ffffff" opacity="0.8"/>
+                    </svg>`
+                },
+                explanation: "自分には良い香りでも、相手にとっては強すぎる匂いは不快になることがあります。「無臭」が最高のビジネスマナーです。",
+                tip: "毎日の入浴と清潔な服の着用、汗をかいたらこまめに拭くことが一番の予防です。"
+            }
+        ];
+
+        // ディープコピーして作業用データ作成
+        let quizData = JSON.parse(JSON.stringify(defaultQuizData));
+
+        // localStorage から保存されたカスタム画像を読み込む
+        function loadCustomImagesFromStorage() {
+            try {
+                const saved = localStorage.getItem('manner_quiz_custom_images');
+                if (saved) {
+                    const customMap = JSON.parse(saved);
+                    quizData.forEach(q => {
+                        if (customMap[q.id]) {
+                            if (customMap[q.id].A) q.optionA.customImg = customMap[q.id].A;
+                            if (customMap[q.id].B) q.optionB.customImg = customMap[q.id].B;
+                        }
+                    });
+                }
+            } catch (e) {
+                console.log("Storage load error:", e);
+            }
+        }
+
+        function saveCustomImagesToStorage() {
+            try {
+                const customMap = {};
+                quizData.forEach(q => {
+                    customMap[q.id] = {
+                        A: q.optionA.customImg,
+                        B: q.optionB.customImg
+                    };
+                });
+                localStorage.setItem('manner_quiz_custom_images', JSON.stringify(customMap));
+            } catch (e) {
+                console.log("Storage save error:", e);
+            }
+        }
+
+        // ==========================================
+        // ゲーム状態変数
+        // ==========================================
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let isAnsweringAllowed = true;
+
+        window.onload = function() {
+            loadCustomImagesFromStorage();
+        };
+
+        function startGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            isAnsweringAllowed = true;
+
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            document.getElementById('screen-quiz').classList.add('flex');
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isAnsweringAllowed = true;
+            const q = quizData[currentQuestionIndex];
+
+            document.getElementById('quiz-counter').innerHTML = `第 <span class="text-blue-600 text-lg">${currentQuestionIndex + 1}</span> / ${quizData.length} 問`;
+            document.getElementById('quiz-category').innerText = `カテゴリー: ${q.category}`;
+            const progressPercent = ((currentQuestionIndex + 1) / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+            document.getElementById('quiz-question').innerText = q.question;
+
+            // Visual A (カスタム画像があれば優先表示)
+            const visA = document.getElementById('visual-a');
+            if (q.optionA.customImg) {
+                visA.innerHTML = `<img src="${q.optionA.customImg}" alt="Option A" class="quiz-visual-img" onerror="this.onerror=null; this.src='https://placehold.co/300x200/e2e8f0/475569?text=Image+Error';">`;
+            } else {
+                visA.innerHTML = q.optionA.svg;
+            }
+            document.getElementById('text-a').innerText = q.optionA.text;
+            document.getElementById('overlay-a').classList.add('hidden');
+
+            // Visual B
+            const visB = document.getElementById('visual-b');
+            if (q.optionB.customImg) {
+                visB.innerHTML = `<img src="${q.optionB.customImg}" alt="Option B" class="quiz-visual-img" onerror="this.onerror=null; this.src='https://placehold.co/300x200/e2e8f0/475569?text=Image+Error';">`;
+            } else {
+                visB.innerHTML = q.optionB.svg;
+            }
+            document.getElementById('text-b').innerText = q.optionB.text;
+            document.getElementById('overlay-b').classList.add('hidden');
+
+            document.getElementById('modal-explanation').classList.add('hidden');
+        }
+
+        function selectAnswer(selected) {
+            if (!isAnsweringAllowed) return;
+            isAnsweringAllowed = false;
+
+            const q = quizData[currentQuestionIndex];
+            const isCorrect = (selected === q.correct);
+
+            if (isCorrect) {
+                score++;
+                playCorrectSound();
+            } else {
+                playWrongSound();
+            }
+
+            showStamp('a', q.correct === 'A');
+            showStamp('b', q.correct === 'B');
+
+            setTimeout(() => {
+                showExplanationModal(isCorrect, q);
+            }, 900);
+        }
+
+        function showStamp(cardKey, isCardCorrect) {
+            const overlay = document.getElementById(`overlay-${cardKey}`);
+            const stamp = document.getElementById(`stamp-${cardKey}`);
+            const stampText = document.getElementById(`stamp-text-${cardKey}`);
+
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+
+            if (isCardCorrect) {
+                stamp.className = "text-7xl font-black mb-1 text-emerald-500 animate-bounce";
+                stamp.innerText = "○";
+                stampText.className = "text-lg font-extrabold text-emerald-600";
+                stampText.innerText = "正しい身だしなみ！";
+            } else {
+                stamp.className = "text-7xl font-black mb-1 text-rose-500";
+                stamp.innerText = "✖";
+                stampText.className = "text-lg font-extrabold text-rose-600";
+                stampText.innerText = "注意が必要！";
+            }
+        }
+
+        function showExplanationModal(isUserCorrect, q) {
+            const modal = document.getElementById('modal-explanation');
+            const badge = document.getElementById('modal-badge');
+            const title = document.getElementById('modal-title');
+
+            if (isUserCorrect) {
+                badge.className = "w-12 h-12 rounded-full flex items-center justify-center text-2xl font-black text-white shrink-0 bg-emerald-500 shadow-md";
+                badge.innerText = "○";
+                title.innerText = "大正解！すばらしい！";
+                title.className = "text-xl md:text-2xl font-black text-emerald-600";
+            } else {
+                badge.className = "w-12 h-12 rounded-full flex items-center justify-center text-2xl font-black text-white shrink-0 bg-rose-500 shadow-md";
+                badge.innerText = "✖";
+                title.innerText = "おっと！残念…";
+                title.className = "text-xl md:text-2xl font-black text-rose-600";
+            }
+
+            document.getElementById('modal-explanation-text').innerText = q.explanation;
+            document.getElementById('modal-tip-text').innerText = q.tip;
+
+            modal.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            document.getElementById('modal-explanation').classList.add('hidden');
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResultScreen();
+            }
+        }
+
+        function showResultScreen() {
+            document.getElementById('screen-quiz').classList.remove('flex');
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+
+            document.getElementById('score-val').innerText = score;
+
+            const rankBadge = document.getElementById('rank-badge');
+            const rankComment = document.getElementById('rank-comment');
+
+            if (score === 8) {
+                rankBadge.innerText = "👑 身だしなみパーフェクト神級！";
+                rankComment.innerText = "文句なしの100点満点！どこへ行っても好印象間違いなしの素晴らしいビジネスマナーの持ち主です！";
+                triggerConfetti();
+            } else if (score >= 6) {
+                rankBadge.innerText = "🌟 身だしなみ達人級！";
+                rankComment.innerText = "基礎がバッチリ頭に入っています！間違えたポイントを復習してさらにレベルアップしよう！";
+                triggerConfetti();
+            } else if (score >= 4) {
+                rankBadge.innerText = "👍 あともう一歩！見習い級";
+                rankComment.innerText = "身だしなみの感覚は掴めています！「自分勝手なおしゃれ」と「相手への思いやり」の違いを意識しよう！";
+            } else {
+                rankBadge.innerText = "🌱 のびしろたっぷり修行中！";
+                rankComment.innerText = "大丈夫！今知っておけば将来とても役に立ちます。チェックリストを見直してみよう！";
+            }
+
+            playFanfareSound();
+        }
+
+        // ==========================================
+        // 画像アップロード・カスタマイズ機能
+        // ==========================================
+        function openCustomModal() {
+            renderCustomModalList();
+            document.getElementById('modal-custom').classList.remove('hidden');
+        }
+
+        function closeCustomModal() {
+            document.getElementById('modal-custom').classList.add('hidden');
+            // クイズ実行中なら画面を更新
+            if (!document.getElementById('screen-quiz').classList.contains('hidden')) {
+                loadQuestion();
+            }
+        }
+
+        function openGithubModal() {
+            document.getElementById('modal-github').classList.remove('hidden');
+        }
+
+        function closeGithubModal() {
+            document.getElementById('modal-github').classList.add('hidden');
+        }
+
+        // カスタマイズモーダル内の問題一覧を描画
+        function renderCustomModalList() {
+            const listContainer = document.getElementById('custom-questions-list');
+            listContainer.innerHTML = '';
+
+            quizData.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = "bg-slate-50 rounded-2xl p-4 border border-slate-200 text-left";
+
+                item.innerHTML = `
+                    <div class="font-extrabold text-sm text-slate-800 mb-2 flex items-center justify-between">
+                        <span>問${idx + 1}: ${q.category}</span>
+                        <span class="text-xs text-slate-500 font-normal truncate max-w-[200px]">${q.question}</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- Option A カスタム枠 -->
+                        <div class="bg-white p-2.5 rounded-xl border border-slate-200 text-xs">
+                            <div class="font-bold text-sky-700 mb-1 flex items-center justify-between">
+                                <span>[選択肢 A]</span>
+                                ${q.optionA.customImg ? '<span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded">写真設定中</span>' : '<span class="text-[10px] text-slate-400">初期イラスト</span>'}
+                            </div>
+                            <div class="flex items-center space-x-2 mb-2">
+                                <label class="cursor-pointer bg-sky-50 hover:bg-sky-100 text-sky-700 px-2.5 py-1 rounded-lg border border-sky-200 font-bold transition flex items-center space-x-1">
+                                    <i class="fa-solid fa-upload"></i>
+                                    <span>写真ファイルを選択</span>
+                                    <input type="file" accept="image/*" class="hidden" onchange="handleFileUpload(event, ${q.id}, 'A')">
+                                </label>
+                                ${q.optionA.customImg ? `<button onclick="clearCustomImg(${q.id}, 'A')" class="text-rose-500 hover:text-rose-700 text-xs">削除</button>` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Option B カスタム枠 -->
+                        <div class="bg-white p-2.5 rounded-xl border border-slate-200 text-xs">
+                            <div class="font-bold text-indigo-700 mb-1 flex items-center justify-between">
+                                <span>[選択肢 B]</span>
+                                ${q.optionB.customImg ? '<span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded">写真設定中</span>' : '<span class="text-[10px] text-slate-400">初期イラスト</span>'}
+                            </div>
+                            <div class="flex items-center space-x-2 mb-2">
+                                <label class="cursor-pointer bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-lg border border-indigo-200 font-bold transition flex items-center space-x-1">
+                                    <i class="fa-solid fa-upload"></i>
+                                    <span>写真ファイルを選択</span>
+                                    <input type="file" accept="image/*" class="hidden" onchange="handleFileUpload(event, ${q.id}, 'B')">
+                                </label>
+                                ${q.optionB.customImg ? `<button onclick="clearCustomImg(${q.id}, 'B')" class="text-rose-500 hover:text-rose-700 text-xs">削除</button>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+        // ファイルアップロード処理 (FileReaderでDataURL化)
+        function handleFileUpload(event, questionId, optionKey) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Img = e.target.result;
+                const targetQ = quizData.find(q => q.id === questionId);
+                if (targetQ) {
+                    if (optionKey === 'A') targetQ.optionA.customImg = base64Img;
+                    if (optionKey === 'B') targetQ.optionB.customImg = base64Img;
+
+                    saveCustomImagesToStorage();
+                    renderCustomModalList();
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // 写真の個別削除
+        function clearCustomImg(questionId, optionKey) {
+            const targetQ = quizData.find(q => q.id === questionId);
+            if (targetQ) {
+                if (optionKey === 'A') targetQ.optionA.customImg = null;
+                if (optionKey === 'B') targetQ.optionB.customImg = null;
+
+                saveCustomImagesToStorage();
+                renderCustomModalList();
+            }
+        }
+
+        // すべてイラストに戻す
+        function resetAllImages() {
+            if (confirm("すべてのアップロード写真を削除し、初期のイラストに戻しますか？")) {
+                quizData.forEach(q => {
+                    q.optionA.customImg = null;
+                    q.optionB.customImg = null;
+                });
+                localStorage.removeItem('manner_quiz_custom_images');
+                renderCustomModalList();
+            }
+        }
+
+        // ==========================================
+        // 紙吹雪 (Confetti) エフェクト
+        // ==========================================
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+
+            for (let i = 0; i < 100; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: Math.random() * 4 + 3,
+                    rotation: Math.random() * 360,
+                    rSpeed: (Math.random() - 0.5) * 6
+                });
+            }
+
+            let startTime = Date.now();
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.rotation += p.rSpeed;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    ctx.restore();
+                });
+
+                if (Date.now() - startTime < 3000) {
+                    requestAnimationFrame(render);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            render();
+        }
+
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('confetti-canvas');
+            if (canvas) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        });
+    </script>
+</body>
+</html>
